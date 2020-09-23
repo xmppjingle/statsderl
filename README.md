@@ -1,6 +1,6 @@
 # statsderl
 
-High Performance Erlang StatsD Client
+High Performance Erlang StatsD Client with extra StatsD Tags Support
 
 ![Build Status](https://github.com/lpgauth/shackle/workflows/Erlang%20CI/badge.svg)
 
@@ -93,13 +93,13 @@ High Performance Erlang StatsD Client
 1> statsderl_app:start().
 ok.
 
-2> statsderl:counter(["test", $., "counter"], 1, 0.23).
+2> statsderl:counter(["test", $., "counter"], 1, 0.23, #{<<"tag1">> => <<"val1">>}).
 ok.
 
 3> statsderl:decrement("test.decrement", 1, 0.5).
 ok.
 
-4> statsderl:gauge([<<"test">>, $., "gauge"], 333, 1.0).
+4> statsderl:gauge([<<"test">>, $., "gauge"], 333, 1.0, #{"tag1" => "val1"}).
 ok.
 
 5> statsderl:gauge_decrement([<<"test.gauge_decrement">>], 15, 0.001).
@@ -108,7 +108,7 @@ ok.
 6> statsderl:gauge_increment(<<"test.gauge_increment">>, 32, 1).
 ok.
 
-7> statsderl:increment(<<"test.increment">>, 1, 1).
+7> statsderl:increment(<<"test.increment">>, 1, 1, , #{custom_tag => <<"custom1">>}).
 ok.
 
 8> statsderl:timing("test.timing", 5, 0.5).

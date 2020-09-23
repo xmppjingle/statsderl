@@ -52,24 +52,24 @@ op_code(decrement) ->
 op_code(Function) ->
     Function.
 
-packet(counter, Key, Value, Rate) ->
+packet(counter, Key, Value, Rate, _Tags) ->
     Key2 = safe_normalize(Key),
     Value2 = safe_normalize(Value),
     Rate2 = safe_normalize(Rate),
 
-    case not_undefined([Key2, Value2, Rate2]) of
+    case not_undefined([Key2, Value2, Rate2, #{}]) of
         true ->
-            encode({counter, Key2, Value2, Rate2});
+            encode({counter, Key2, Value2, Rate2, #{}});
         false ->
             undefined
     end;
-packet(OpCode, Key, Value, _Rate) ->
+packet(OpCode, Key, Value, _Rate, _Tags) ->
     Key2 = safe_normalize(Key),
     Value2 = safe_normalize(Value),
 
     case not_undefined([Key2, Value2]) of
         true ->
-            encode({OpCode, Key2, Value2});
+            encode({OpCode, Key2, Value2, #{}});
         false ->
             undefined
     end.
@@ -83,11 +83,11 @@ rate_scaled(_) ->
 
 replace(timing_fun, F) ->
     F;
-replace(Function, {_, _, _, [Key, Value, Rate]} = F) ->
+replace(Function, {_, _, _, [Key, Value, Rate, _Tags]} = F) ->
     RateScaled = rate_scaled(Rate),
     OpCode = op_code(Function),
     Value2 = value(Function, Value),
-    Packet = packet(OpCode, Key, Value2, Rate),
+    Packet = packet(OpCode, Key, Value2, Rate, #{}),
 
     case {RateScaled, Packet} of
         {undefined, undefined} ->
@@ -96,17 +96,17 @@ replace(Function, {_, _, _, [Key, Value, Rate]} = F) ->
             case OpCode of
                 counter ->
                     sample_scaled(RateScaled,
-                        ?TUPLE([?ATOM(OpCode), Key, Value2, Rate]));
+                        ?TUPLE([?ATOM(OpCode), Key, Value2, Rate, #{}]));
                 _ ->
                     sample_scaled(RateScaled,
-                        ?TUPLE([?ATOM(OpCode), Key, Value2]))
+                        ?TUPLE([?ATOM(OpCode), Key, Value2, #{}]))
             end;
         {undefined, _} ->
             sample(Rate,
-                ?TUPLE([?ATOM(cast), ?BINARY(Packet)]));
+                ?TUPLE([?ATOM(cast), ?BINARY(Packet), #{}]));
         _ ->
             sample_scaled(RateScaled,
-                ?TUPLE([?ATOM(cast), ?BINARY(Packet)]))
+                ?TUPLE([?ATOM(cast), ?BINARY(Packet), #{}]))
     end.
 
 sample(Rate, Arguments) ->

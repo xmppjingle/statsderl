@@ -23,13 +23,14 @@
 -type base_key_part() :: hostname | name | sname | undefined | iodata().
 -type key() :: iodata().
 -type operation() :: {cast, iodata()} |
-                     {counter, key(), value(), sample_rate()} |
-                     {gauge, key(), value()} |
-                     {gauge_decrement, key(), value()} |
-                     {gauge_increment, key(), value()} |
-                     {timing, key(), value()} |
-                     {timing_now, key(), erlang:timestamp()} |
-                     {timing_now_us, key(), erlang:timestamp()}.
+                     {counter, key(), value(), sample_rate(), map() | undefined} |
+                     {gauge, key(), value(), map() | undefined} |
+                     {gauge_decrement, key(), value(), map() | undefined} |
+                     {gauge_increment, key(), value(), map() | undefined} |
+                     {timing, key(), value(), map() | undefined} |
+                     {timing_now, key(), erlang:timestamp(), map() | undefined} |
+                     {timing_now_us, key(), erlang:timestamp(), map() | undefined}.
 -type pool_size() :: pos_integer().
 -type sample_rate() :: number().
 -type value() :: number().
+-type tags() :: map().
