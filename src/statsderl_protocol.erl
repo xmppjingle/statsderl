@@ -40,7 +40,7 @@ format_tags(Map) when is_map(Map) ->
     case maps:size(Map) of
         N when N > 0 ->
             [_|Fold] = maps:fold(fun(K, V, Acc) -> BK = to_binary(K), BV = to_binary(V), [<<",">>,<<BK/binary,":",BV/binary>>] ++ Acc end, [], Map),
-            [<<"#">> | Fold];
+            [<<"|#">> | Fold];
         _ -> []
     end;
 format_tags(_) ->
